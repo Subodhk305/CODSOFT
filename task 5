@@ -1,0 +1,105 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Course {
+    String code, title;
+    int capacity;
+
+    public Course(String code, String title, int capacity) {
+        this.code = code;
+        this.title = title;
+        this.capacity = capacity;
+    }
+
+    public boolean isAvailable() {
+        return capacity > 0;
+    }
+
+    public void enroll() {
+        if (isAvailable()) {
+            capacity--;
+        }
+    }
+
+    public void drop() {
+        capacity++;
+    }
+
+    public String toString() {
+        return code + " - " + title + " (Available slots: " + capacity + ")";
+    }
+}
+
+public class CourseRegistrationSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Course> courses = new ArrayList<>();
+        ArrayList<Course> registeredCourses = new ArrayList<>();
+
+        while (true) {
+            System.out.println("\n1. Add Course\n2. View Courses\n3. Register Course\n4. Drop Course\n5. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 5) break;
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter course code: ");
+                    String code = scanner.next();
+                    System.out.print("Enter course title: ");
+                    scanner.nextLine();  // Consume newline
+                    String title = scanner.nextLine();
+                    System.out.print("Enter course capacity: ");
+                    int capacity = scanner.nextInt();
+                    courses.add(new Course(code, title, capacity));
+                    System.out.println("Course added successfully!");
+                    break;
+                case 2:
+                    if (courses.isEmpty()) {
+                        System.out.println("No courses available.");
+                    } else {
+                        for (Course c : courses) System.out.println(c);
+                    }
+                    break;
+                case 3:
+                    System.out.print("Enter course code to register: ");
+                    String registerCode = scanner.next();
+                    boolean registered = false;
+                    for (Course c : courses) {
+                        if (c.code.equals(registerCode) && c.isAvailable()) {
+                            c.enroll();
+                            registeredCourses.add(c);
+                            System.out.println("Registered successfully!");
+                            registered = true;
+                            break;
+                        }
+                    }
+                    if (!registered) {
+                        System.out.println("Invalid course code or course is full.");
+                    }
+                    break;
+                case 4:
+                    System.out.print("Enter course code to drop: ");
+                    String dropCode = scanner.next();
+                    boolean dropped = false;
+                    for (Course c : registeredCourses) {
+                        if (c.code.equals(dropCode)) {
+                            c.drop();
+                            registeredCourses.remove(c);
+                            System.out.println("Dropped successfully!");
+                            dropped = true;
+                            break;
+                        }
+                    }
+                    if (!dropped) {
+                        System.out.println("Invalid course code or not registered in the course.");
+                    }
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+        scanner.close();
+    }
+}
